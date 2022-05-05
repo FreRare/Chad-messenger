@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "107640795259",
+    "project_id": "chad-messenger",
+    "storage_bucket": "chad-messenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107640795259:android:58248e5030f84c9f08b2de",
+        "android_client_info": {
+          "package_name": "com.example.chad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107640795259-p8fs3pfr4sg41st6hard7c6udl91dmum.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chad",
+            "certificate_hash": "5a1106e12d5f75655a8079a49edf291a450a2299"
+          }
+        },
+        {
+          "client_id": "107640795259-0p206ehimg2sfi73lnonkac3vvcn9cml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCshXj8pvTLzwIqWqCjcrUatdzR6ftoh44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107640795259-0p206ehimg2sfi73lnonkac3vvcn9cml.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Chad-messenger</string>
+    <string name="username_ENG">Username</string>
+    <string name="username_HUN">Felhasználónév</string>
+    <string name="password_ENG">Password</string>
+    <string name="password_HUN">Jelszó</string>
+    <string name="welcome_ENG">Welcome to Chad</string>
+    <string name="login_ENG">Login</string>
+    <string name="login_HUN">Bejelentkezés</string>
+    <string name="registration_ENG">Registration</string>
+    <string name="registration_HUN">Regisztráció</string>
+    <string name="registration_btn_ENG">Proceed</string>
+    <string name="registration_btn_HUN">Folytatás</string>
+    <string name="name_HUN">Név</string>
+    <string name="name_ENG">Name</string>
+    <string name="email_ENG">Email address</string>
+    <string name="email_HUN">Email cím</string>
+    <string name="password_again_ENG">Confirm password</string>
+    <string name="password_again_HUN">Jelszó megerősítése</string>
+    <string name="birth_date_ENG">Birthday</string>
+    <string name="birth_date_HUN">Születési dátum</string>
+    <string name="cancel_ENG">Cancel</string>
+    <string name="cancel_HUN">Mégse</string>
+    <string name="login_as_guest_ENG">Login as guest</string>
+    <string name="login_as_guest_HUN">Bejelentkezés vendégként</string>
+    <string name="login_google_HUN">Bejelentkezés google fiókkal</string>
+    <string name="login_google_ENG">Login with google</string>
+    <string name="action_settings_ENG">Settings</string>
+</resources>
