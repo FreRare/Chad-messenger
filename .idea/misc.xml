@@ -10,7 +10,9 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.21" />
         <entry key="app/src/main/res/layout/activity_messenger.xml" value="0.20729166666666668" />
         <entry key="app/src/main/res/layout/activity_registration.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/list_contacts.xml" value="0.33" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.33" />
+        <entry key="app/src/main/res/menu/messenger_menu.xml" value="0.1" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>

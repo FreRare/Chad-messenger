@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Chad-messenger</string>
+    <string name="app_name">Chaddenger</string>
     <string name="username_ENG">Username</string>
     <string name="username_HUN">Felhasználónév</string>
     <string name="password_ENG">Password</string>
@@ -26,4 +26,10 @@
     <string name="login_google_HUN">Bejelentkezés google fiókkal</string>
     <string name="login_google_ENG">Login with google</string>
     <string name="action_settings_ENG">Settings</string>
+    <string name="profile_pic_description">Profile picture for the contact</string>
+    <string name="send_message">Message</string>
+    <string name="search_ENG">Search</string>
+    <string name="new_message_ENG">New message</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
 </resources>

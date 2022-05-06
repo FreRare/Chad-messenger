@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chad">
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MessageComposeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ContactListActivity"
             android:exported="false" />
         <activity
