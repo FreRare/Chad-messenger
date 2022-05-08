@@ -1,8 +1,10 @@
-package com.example.chad;
+package com.example.chad.activities;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
+import com.example.chad.R;
 
 public class MessengerActivity extends AppCompatActivity {
 
