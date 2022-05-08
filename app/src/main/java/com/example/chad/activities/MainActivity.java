@@ -1,7 +1,10 @@
 package com.example.chad.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,12 +17,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chad.R;
-import com.example.chad.RegistrationActivity;
+import com.example.chad.models.Contact;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
+/**
+ * Main activity
+ * Login page for the chat at first
+ * Authenticates user than starts the messenger or you can sign up
+ */
 public class MainActivity
         extends AppCompatActivity {
 

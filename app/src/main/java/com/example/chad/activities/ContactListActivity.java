@@ -1,4 +1,4 @@
-package com.example.chad;
+package com.example.chad.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,7 +6,9 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,30 +16,48 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 
+import com.example.chad.models.Contact;
+import com.example.chad.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ContactListActivity extends AppCompatActivity {
 
     private static final String TAG = ContactListActivity.class.getName();
+    //Key to start activity safely
     private static final int KEY = 42;
+    //Active firebase user
+    private FirebaseUser mActiveFirebaseUser;
+    private Contact mActiveUser;    //The active user
+    //Firestore reference
+    private FirebaseFirestore mFirestore;
+    //Collection get from the cloud
+    private CollectionReference mContacts;
 
-    private FirebaseAuth fbAuth;
-    private FirebaseUser activeUser;
+    //flag for loading data with service
+    private boolean isSomethingLoading = false;
 
-    private RecyclerView recyclerView;
-    private ArrayList<Contact> contactList;
-    private ContactAdapter contactAdapter;
-    private int contactListGridNumber = 1;
+    //Real members
+    private RecyclerView mRecyclerView; //The view for the whole page
+    private ArrayList<Contact> mContactList;    //Contacts listed
+    private ContactListAdapter mContactAdapter; //Adapter to use recycle view
+    private int mContactListGridNumber = 1;     //I do not need this but might be helpful sometimes when developing the app further
 
 
     @Override
+    @SuppressLint("SourceLockedOrientationActivity")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Log.i(TAG, "onCreate!");
 
         //Getting the extra data from the intent
@@ -49,10 +69,9 @@ public class ContactListActivity extends AppCompatActivity {
         }
 
         //Getting active user
-        fbAuth = FirebaseAuth.getInstance();
-        activeUser = fbAuth.getCurrentUser();
+        mActiveFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //Checking if there is user, if not than terminate process
-        if(activeUser != null){
+        if(mActiveFirebaseUser != null){
             Log.i(TAG, "Active user is set up!");
         }else{
             Log.e(TAG, "No active user logged in!");
@@ -60,28 +79,79 @@ public class ContactListActivity extends AppCompatActivity {
         }
 
         //Setting up recycler view
-        recyclerView = findViewById(R.id.contact_list_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, contactListGridNumber));
+        mRecyclerView = findViewById(R.id.contact_list_view);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, mContactListGridNumber));
         //Init contact list and adapter
-        contactList = new ArrayList<>();
-        contactAdapter = new ContactAdapter(this, contactList);
-        recyclerView.setAdapter(contactAdapter);
+        mContactList = new ArrayList<>();
+        mContactAdapter = new ContactListAdapter(this, mContactList);
+        mRecyclerView.setAdapter(mContactAdapter);
 
-        initContacts();
-
+        //If user is not logged in anonymously than load the user contacts form the cloud
+        if(!mActiveFirebaseUser.isAnonymous()){
+            Log.i(TAG, "onCreate: Logged in user is known. Getting data from cloud...");
+            //firebase setup
+            mFirestore = FirebaseFirestore.getInstance();
+            mContacts = mFirestore.collection("contacts");
+            findActiveUser();
+        }else{
+            this.mActiveUser = new Contact();
+            this.mContactList = new ArrayList<>();
+        }
     }
 
-    private void initContacts() {
-        //Get data form database based on the current user and initialize contact list from it
-        //Now just for checking if it works
-        contactList.add(new Contact("Test1", "Test", "Tester1", "Tester@gmail.com"));
-        contactList.add(new Contact("Test2", "Test", "Tester2", "Tester@gmail.com"));
-        contactList.add(new Contact("Test3", "Test", "Tester3", "Tester@gmail.com"));
-        //Notifying adapter
-        contactAdapter.notifyDataSetChanged();
+    private void findActiveUser(){
+        try {
+            //finding active user in database
+            mContacts.whereEqualTo("id", mActiveFirebaseUser.getUid()).get().addOnSuccessListener(query -> {
+                //If found set the user to it only one user should exist per id
+                this.mActiveUser = query.toObjects(Contact.class).get(0);
+                Log.d(TAG, "findActiveUser: User found:" + this.mActiveUser.toString());
+                //If user is found than init contact list by its data
+            }).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    initContactsList();
+                }
+            });
+        }catch (Error | Exception e){
+            Log.e(TAG, "findActiveUser: Cannot find user with the given id: ", e);
+        }
+    }
+
+    private void initContactsList() {
+        try {
+            ArrayList<String> mUserContactsList = mActiveUser.getContacts();
+            if(mUserContactsList.size() == 0){
+                Log.d(TAG, "initContactsList: User have no contacts. Initializing contact list and return.");
+                this.mContactList = new ArrayList<>();
+                return;
+            }
+            //Get data form database based on the current user and initialize contact list from it
+            for (String userId : mUserContactsList) {
+                //Because id is unique the returned query has only one element
+                mContacts.whereEqualTo("id", userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @SuppressLint("NotifyDataSetChanged")
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            mContactList.add(task.getResult().toObjects(Contact.class).get(0));
+                            Log.i(TAG, "initContactsList: User with id " + userId + " successfully added to the contact list!");
+                        }else{
+                            Log.e(TAG, "initContactsList: Problem while getting contacts from the cloud!");
+                        }
+                        mContactAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }catch (Exception | Error e){
+            Log.e(TAG, "initContactsList: Problem while getting contacts from the cloud => ", e);
+        }
     }
 
     public void messageContact(View view) {
+        Log.d(TAG, "messageContact: Messenger activity started without user to message.");
+        Intent intent = new Intent(this, MessengerActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -97,7 +167,7 @@ public class ContactListActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 Log.d(TAG, "onQueryTextChange: " + s);
-                contactAdapter.getFilter().filter(s);
+                mContactAdapter.getFilter().filter(s);
                 return false;
             }
         });

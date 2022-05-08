@@ -4,6 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileActivity">
+    tools:context=".activities.ProfileActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete_profile_button"
+        android:text="@string/delete_profile"
+        android:onClick="deleteProfile"
+        />
+    <TextView
+        android:id="@+id/under_dev"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/under_development"
+        android:textSize="42sp"
+        android:textColor="@color/text_color"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

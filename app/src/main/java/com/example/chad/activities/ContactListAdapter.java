@@ -1,5 +1,6 @@
-package com.example.chad;
+package com.example.chad.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -15,52 +16,55 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chad.R;
+import com.example.chad.models.Contact;
+
+
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Adapter class for contact listing and filtering
  */
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> implements Filterable {
-    private static final String TAG = ContactAdapter.class.getName();
+public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> implements Filterable {
+    private static final String TAG = ContactListAdapter.class.getName();
 
-    private ArrayList<Contact> contacts;
-    private ArrayList<Contact> allContacts;
-    private Context context;
-    private int lastPos = -1;
+    private ArrayList<Contact> mContacts;
+    private final ArrayList<Contact> mAllContacts;
+    private final Context mContext;
+    private int mLastPos = -1;
 
-    ContactAdapter(Context context, ArrayList<Contact> contacts){
-        this.contacts = contacts;
-        this.allContacts = contacts;
-        this.context = context;
+    ContactListAdapter(Context mContext, ArrayList<Contact> mContacts){
+        this.mContacts = mContacts;
+        this.mAllContacts = mContacts;
+        this.mContext = mContext;
     }
 
     //Creating view holder for contact list
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(this.context).inflate(R.layout.list_contacts, parent, false));
+        return new ViewHolder(LayoutInflater.from(this.mContext).inflate(R.layout.list_contacts, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder, int position) {
-        Contact currentContact = this.contacts.get(position);
+    public void onBindViewHolder(@NonNull ContactListAdapter.ViewHolder holder, int position) {
+        Contact currentContact = this.mContacts.get(position);
         holder.bindTo(currentContact);
 
-        if(holder.getBindingAdapterPosition() > lastPos){
-            Animation floatIn = AnimationUtils.loadAnimation(context, R.anim.float_in_contact_list_animation);
+        if(holder.getBindingAdapterPosition() > mLastPos){
+            Animation floatIn = AnimationUtils.loadAnimation(mContext, R.anim.float_in_conversation_anim);
             holder.itemView.startAnimation(floatIn);
-            lastPos = holder.getBindingAdapterPosition();
+            mLastPos = holder.getBindingAdapterPosition();
         }
     }
 
     @Override
-    public int getItemCount() { return this.contacts.size(); }
+    public int getItemCount() { return this.mContacts.size(); }
 
     @Override
     public Filter getFilter() { return contactFilter; }
 
-    private Filter contactFilter = new Filter(){
+    private final Filter contactFilter = new Filter(){
 
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
@@ -69,11 +73,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             FilterResults res = new FilterResults();
 
             if(charSequence == null || charSequence.length() == 0){
-                res.count = allContacts.size();
-                res.values = allContacts;
+                res.count = mAllContacts.size();
+                res.values = mAllContacts;
             }else{
                 String filterString = charSequence.toString().toLowerCase().trim();
-                for(Contact c: allContacts){
+                for(Contact c: mAllContacts){
                     if(c.getName().toLowerCase().contains(filterString) || c.getUsername().toLowerCase().contains(filterString)){
                         filteredContacts.add(c);
                     }
@@ -81,17 +85,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 res.count = filteredContacts.size();
                 res.values = filteredContacts;
             }
-
             return res;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             try {
-                contacts = (ArrayList<Contact>) filterResults.values;
+                mContacts = (ArrayList<Contact>) filterResults.values;
                 notifyDataSetChanged();
             }catch (Error e){
-                Log.e(TAG, "publishResults: " + e.toString());
+                Log.e(TAG, "publishResults: ", e);
             }
 
         }
@@ -102,25 +106,30 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         private final String TAG = ViewHolder.class.getName();
 
         private TextView contactName;
-        private TextView contactMessage;
+        private TextView lastMessage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             contactName = itemView.findViewById(R.id.contact_name);
-            contactMessage = itemView.findViewById(R.id.message);
+            lastMessage = itemView.findViewById(R.id.last_message);
 
             //When clicked on contact open the messenger activity with the contact
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.i(TAG, "Contact clicked...");
+                    Log.d(TAG, "onClick: Messenger activity started with the username: " + contactName.getText().toString());
+                    Intent messenger = new Intent(mContext, MessageComposeActivity.class);
+                    messenger.putExtra("username", contactName.getText().toString());
+                    messenger.putExtra("SECRET_KEY", 42);
+                    mContext.startActivity(messenger);
                 }
             });
         }
 
         public void bindTo(Contact currentContact) {
             contactName.setText(currentContact.getUsername());
-            contactMessage.setText(currentContact.getLastMessage().getMessage());
+            lastMessage.setText("This is the Chadddenger! Under development...");
         }
     }
 }

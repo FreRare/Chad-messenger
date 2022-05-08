@@ -32,4 +32,6 @@
     <string name="new_message_ENG">New message</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
+    <string name="under_development">Under development! ;)</string>
+    <string name="delete_profile">Delete profile</string>
 </resources>
